@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.csm.mapper.MemberMapper">
+
+<resultMap type="org.csm.domain.MemberVO" id="memberMap">
+	<id property="userid" column="userid"/>
+	<result property="userid" column="userid"/>
+	<result property="userpw" column="userpw"/>
+	<result property="useremail" column="useremail"/>
+	<result property="regDate" column="regdate"/>
+	<result property="updateDate" column="updatedate"/>
+	<collection property="authList" resultMap="authMap">
+	</collection> 
+</resultMap>
+  
+<resultMap type="org.csm.domain.AuthVO" id="authMap">
+	<result property="userid" column="userid"/>
+	<result property="auth" column="auth"/>
+</resultMap>
+  
+<select id="read" resultMap="memberMap">
+	select 
+		mem.userid,  userpw, useremail, enabled, regdate, updatedate, auth
+	from 
+		haengbok_member mem LEFT OUTER JOIN haengbok_member_auth auth on mem.userid = auth.userid 
+	where mem.userid = #{userid}
+</select>
+
+<insert id="insert">
+	insert into haengbok_member(userid, userpw, useremail) values (#{userid}, #{userpw}, #{useremail})
+</insert>
+<insert id="insertAuth">
+	insert into haengbok_member_auth (userid, auth) values (#{userid}, #{auth})
+</insert>
+
+<select id="checkid" resultType="int">
+	select count(*) from haengbok_member where userid = #{userid}
+</select>
+<select id="checkemail" resultType="int">
+	select count(*) from haengbok_member where useremail = #{useremail}
+</select>
+<select id="checkforfindpw" resultType="int">
+	select count(*) from haengbok_member where useremail = #{useremail} and userid = #{userid}
+</select>
+<select id="findid" resultType="String">
+	select userid from haengbok_member where useremail = #{useremail}
+</select>
+<update id="updatepw">
+	update haengbok_member set userpw = #{userpw} where userid = #{userid}
+</update>
+
+<select id="borrowedAll" resultType="org.csm.domain.EbookVO">
+	select
+		borrowed.ebookNo, ebooks.ebookTitle, borrowed.regdate, borrowed.deadline
+	from ebooks left outer join borrowed
+	on ebooks.ebookNo = borrowed.ebookNo
+	where borrowed.userid= #{userid}
+</select>
+</mapper>

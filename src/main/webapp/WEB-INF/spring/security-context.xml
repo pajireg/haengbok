@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="customAccessDenied" class="org.csm.security.CustomAccessDeniedHandler"></bean>
+	<bean id="customLoginSuccess" class="org.csm.security.CustomLoginSuccessHandler"></bean>
+ 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	<bean id="customUserDetailsService" class="org.csm.security.CustomUserDetailsService"></bean>
+
+	<security:http>
+
+		<security:intercept-url pattern="/ebook/register"	access="hasRole('ROLE_ADMIN')" />
+		<security:intercept-url pattern="/admin/*"	access="hasRole('ROLE_ADMIN')" />
+ 		<security:access-denied-handler	ref="customAccessDenied" />
+		<security:form-login login-page="/member/login" authentication-success-handler-ref="customLoginSuccess" />
+		<security:logout logout-url="/member/logout" invalidate-session="true" logout-success-url="/"/>
+  		<security:remember-me data-source-ref="dataSource" token-validity-seconds="1209600" />
+		<security:logout logout-url="/member/logout"	invalidate-session="true" delete-cookies="remember-me,JSESSION_ID" />
+
+	</security:http>
+
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+			<security:password-encoder ref="bcryptPasswordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+
+</beans>

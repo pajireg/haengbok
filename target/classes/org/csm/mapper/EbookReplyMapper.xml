@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.csm.mapper.EbookReplyMapper">
+
+<select id="list" resultType="org.csm.domain.EbookReplyVO">
+	select * from ebook_reply where ebookNo = #{ebookNo} order by replyNo desc
+</select>
+<insert id="insert">
+	insert into ebook_reply (ebookNo, replytext, replyer) values (#{ebookNo}, #{replytext}, #{replyer})
+</insert>
+<update id="update">
+	update ebook_reply set replytext = #{replytext}, updatedate = sysdate() where replyNo = #{replyNo}	
+</update>
+<delete id="delete">
+	delete from ebook_reply where replyNo = #{replyNo}
+</delete>
+<select id="read" resultType="org.csm.domain.EbookReplyVO">
+	select * from ebook_reply where replyNo = #{replyNo}
+</select>
+<select id="getListWithPaging" resultType="org.csm.domain.EbookReplyVO">
+	select replyNo, ebookNo, replytext, replyer, regdate, updatedate from ebook_reply where ebookNo = #{ebookNo} order by replyNo asc
+</select>
+
+</mapper>

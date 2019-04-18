@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.csm.mapper.EbookMapper">
+
+<select id="getList" resultType="org.csm.domain.EbookVO">
+<![CDATA[
+	select * from ebooks order by ebookNo desc
+]]>
+</select>
+
+<select id="getListPopular" resultType="org.csm.domain.EbookVO">
+<![CDATA[
+	select @rownum:=@rownum+1 rownum, ebooks.*
+	from ebooks, (select @rownum:=0) R
+]]>
+<include refid="criteria"></include>
+<![CDATA[
+	order by numofborrow desc limit #{pageNum},#{amount}
+]]>
+</select>
+
+<select id="getListLiked" resultType="org.csm.domain.EbookVO">
+<![CDATA[
+	select @rownum:=@rownum+1 rownum, ebooks.*
+	from ebooks, (select @rownum:=0) R
+]]>
+<include refid="criteria"></include>
+<![CDATA[
+	order by liked desc limit #{pageNum},#{amount}
+]]>
+</select>
+
+<select id="getListWithPaging" resultType="org.csm.domain.EbookVO">
+<![CDATA[
+	select @rownum:=@rownum+1 rownum, ebooks.*
+	from ebooks, (select @rownum:=0) R
+]]>
+<!-- 	<trim prefix="where (" suffix=")" prefixOverrides="or">
+		<foreach collection="typeArr" item="type">
+			<trim prefix="or">
+				<choose>
+  					<when test="type == 'T'.toString()">
+						ebookTitle like concat('%', #{keyword}, '%')
+					</when>
+					<when test="type == 'D'.toString()">
+						ebookDetails like concat('%', #{keyword}, '%')
+					</when>
+					<when test="type == 'A'.toString()">
+						ebookAuthor like concat('%', #{keyword}, '%')
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+	</trim> -->
+	<include refid="criteria"></include>
+<![CDATA[
+	order by rownum desc limit #{pageNum},#{amount}
+]]>
+</select>
+<sql id="criteria">
+	<trim prefix="where (" suffix=")" prefixOverrides="or">
+		<foreach collection="typeArr" item="type">
+			<trim prefix="or">
+				<choose>
+					<when test="type == 'T'.toString()">
+						ebookTitle like concat('%', #{keyword}, '%')
+					</when>
+					<when test="type == 'D'.toString()">
+						ebookDetails like concat('%', #{keyword}, '%')
+					</when>
+					<when test="type == 'A'.toString()">
+						ebookAuthor like concat('%', #{keyword}, '%')
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+	</trim>
+</sql>
+<select id="getTotalCount" resultType="int">
+	select count(*) from ebooks
+	<include refid="criteria"></include>
+</select>
+<insert id="insert">
+	insert into ebooks (
+	ebookTitle, ebookAuthor, ebookDetails
+	)
+	values (
+	#{ebookTitle}, #{ebookAuthor}, #{ebookDetails}
+	)
+	<selectKey keyProperty="ebookNo" order="AFTER" resultType="long">
+		select max(ebookNo) from ebooks
+	</selectKey>
+</insert>
+
+<select id="read" resultType="org.csm.domain.EbookVO">
+<![CDATA[
+	select * from ebooks where ebookNo = #{ebookNo}
+]]>
+</select>
+
+<delete id="delete">
+	delete from ebooks where ebookNo = #{ebookNo}
+</delete>
+
+<update id="update">
+	update ebooks set
+	ebookTitle = #{ebookTitle},
+	ebookAuthor = #{ebookAuthor},
+	ebookDetails = #{ebookDetails},
+	ebookUpdatedate = sysdate()
+	where ebookNo = #{ebookNo}
+	<selectKey order="AFTER" resultType="org.csm.domain.EbookVO">
+		select * from ebooks where ebookNo = #{ebookNo}
+	</selectKey>
+</update>
+
+<update id="borrow">
+	update ebooks set quantity = quantity-1, numofborrow = numofborrow+1 where ebookNo = #{ebookNo}
+</update>
+<insert id="insertborrow">
+	insert into borrowed (ebookNo, userid) values (#{ebookNo}, #{userid})
+</insert>
+<update id="like">
+	update ebooks set liked = liked+1 where ebookNo = #{ebookNo}
+</update>
+<insert id="insertlike">
+	insert into liked (ebookNo, userid) values (#{ebookNo}, #{userid})
+</insert>
+<update id="unlike">
+	update ebooks set liked = liked-1 where ebookNo = #{ebookNo}
+</update>
+<insert id="deletelike">
+	delete from liked where (userid = #{userid} and ebookNo = #{ebookNo})
+</insert>
+</mapper>
