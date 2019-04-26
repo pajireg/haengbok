@@ -223,4 +223,11 @@ public class MemberServiceImpl implements MemberService{
 		return mapper.borrowedAll(userid);
 	}
 
+
+	@Override
+	public void leavemember(String userid) throws Exception {
+		log.info("leavemember......");
+		mapper.delete(userid);
+	}
+
 }

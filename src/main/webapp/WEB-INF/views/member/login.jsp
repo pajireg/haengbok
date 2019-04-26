@@ -29,13 +29,13 @@
         <form id="loginform" action="/haengbok/login" method="post">
           <div class="form-group">
             <div class="form-label-group">
-              <input type="text" name="username" id="inputId" class="form-control" placeholder="아이디" required="required" value='<c:out value="${userid }"/>' autofocus="autofocus">
+              <input type="text" name="username" id="inputId" class="form-control" placeholder="아이디" required="required" autofocus="autofocus">
               <label for="inputId">아이디 입력</label>
             </div>
           </div>
           <div class="form-group">
             <div class="form-label-group">
-              <input type="password" name="password" id="inputPassword" class="form-control" placeholder="비밀번호" value='<c:out value="${userpw }"/>'required="required">
+              <input type="password" name="password" id="inputPassword" class="form-control" placeholder="비밀번호" required="required">
               <label for="inputPassword">비밀번호 입력</label>
             </div>
           </div>
@@ -64,14 +64,13 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-	var hello = '<c:out value="${userid}"/>';
-	var formObj = $("#loginform");
-	if(hello != ''){
-		formObj.submit();
-	}
 	var error = '<c:out value="${error}"/>';
 	if(error != ''){
 		alert(error);
+	}
+	var signup = '<c:out value="${signup}"/>';
+	if(signup != ''){
+		alert(signup + "로그인 후 이용해 주세요.");
 	}
 });
 </script>

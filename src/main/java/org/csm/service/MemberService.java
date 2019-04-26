@@ -19,4 +19,6 @@ public interface MemberService {
 	public void changepw(MemberVO member) throws Exception;
 	
 	public List<EbookVO> borrowedAll(String userid) throws Exception;
+	
+	public void leavemember(String userid) throws Exception;
 }

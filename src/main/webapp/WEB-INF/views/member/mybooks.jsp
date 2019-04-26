@@ -21,7 +21,7 @@
         <div class="list-group">
         	<a href="#" class="list-group-item active">나의 서재</a>
           <a href="changepw" class="list-group-item">비밀번호 변경</a>
-          <a href="#" class="list-group-item">회원 탈퇴</a>
+          <a href="leavemember" class="list-group-item">회원 탈퇴</a>
           
         </div>
       </div>

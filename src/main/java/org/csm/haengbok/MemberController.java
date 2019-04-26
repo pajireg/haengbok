@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.csm.domain.MemberVO;
 import org.csm.service.MemberService;
@@ -31,15 +32,16 @@ public class MemberController {
 	
 	
 	@GetMapping("/login")
-	public void loginGET(String error, String logout, Model model, HttpServletRequest request) {
+	public void loginGET(String error, Model model, HttpServletRequest request, RedirectAttributes rttr) {
 		
 		log.info("error : " + error);
-		
+
+		String referrer = request.getHeader("Referer");
+		log.info("referrer : " + referrer);
 		if(error != null) {
 			model.addAttribute("error", "아이디 또는 비밀번호가 틀렸습니다.");
-		}else {
-			String referrer = request.getHeader("Referer");
-		    request.getSession().setAttribute("prevPage", referrer);
+		}else if(!(referrer.contains("member"))){
+			request.getSession().setAttribute("prevPage", referrer);
 		}
 		
 	}
@@ -60,10 +62,7 @@ public class MemberController {
 	@PostMapping("/signup")
 	public String signupPOST(MemberVO member, RedirectAttributes rttr) throws Exception {
 		log.info("sign up post......" + member);
-		rttr.addFlashAttribute("userpw", member.getUserpw());
 		service.signup(member);
-		rttr.addFlashAttribute("userid", member.getUserid());
-		
 		return "redirect:/member/login";
 	}
 	
@@ -156,5 +155,22 @@ public class MemberController {
 	@GetMapping("/mybooks")
 	public void borrowedAll(Model model, @RequestParam("userid") String userid) throws Exception {
 		model.addAttribute("list", service.borrowedAll(userid));
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/leavemember")
+	public void leavemember() throws Exception {
+		
+	}
+	
+	@PreAuthorize("principal.username == #userid")
+	@PostMapping("/leavemember")
+	public String leavememberPost(String userid, HttpServletRequest request) throws Exception {
+		log.info("leavemember : " + userid);
+		service.leavemember(userid);
+		
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "redirect:/";
 	}
 }

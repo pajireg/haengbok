@@ -58,4 +58,8 @@
 	on ebooks.ebookNo = borrowed.ebookNo
 	where borrowed.userid= #{userid}
 </select>
+
+<delete id="delete">
+	delete from haengbok_member where userid = #{userid}
+</delete>
 </mapper>

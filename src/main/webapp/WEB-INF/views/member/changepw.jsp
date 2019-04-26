@@ -80,7 +80,7 @@ $(document).ready(function(){
         <div class="list-group">
           <a href="mybooks?userid=<sec:authentication property="principal.username"/>" class="list-group-item">나의 서재</a>
           <a href="#" class="list-group-item active">비밀번호 변경</a>
-          <a href="#" class="list-group-item">회원 탈퇴</a>
+          <a href="leavemember" class="list-group-item">회원 탈퇴</a>
         </div>
         </c:otherwise>
       </c:choose>

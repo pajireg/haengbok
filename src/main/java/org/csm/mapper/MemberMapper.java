@@ -19,4 +19,6 @@ public interface MemberMapper {
 	public int updatepw(MemberVO member) throws Exception;
 	
 	public List<EbookVO> borrowedAll(String userid) throws Exception;
+	
+	public void delete(String userid) throws Exception;
 }
